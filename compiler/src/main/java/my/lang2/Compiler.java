@@ -27,9 +27,16 @@ public class Compiler implements Opcodes {
         String fileName = l2File.getName();
         String fileAbsolutePath = l2File.getAbsolutePath();
         String className = fileName.replace(".l2", "");
-        final Queue<Instruction> instructionsQueue = new SyntaxTreeTraverser().getInstructions(fileAbsolutePath);
+        final Queue<Instruction> instructionsQueue = new SyntaxTreeTraverser().getInstructionsFromFile(fileAbsolutePath);
+        final byte[] byteCode = new BytecodeGenerator().generateBytecode(instructionsQueue, className);
+        saveBytecodeToClassFile(fileAbsolutePath, byteCode);
+    }
+    public void compile(String script, String fileName) throws Exception {
+        String className = fileName.replace(".l2", "");
+        final Queue<Instruction> instructionsQueue = new SyntaxTreeTraverser().getInstructionsFromString(script);
         final byte[] byteCode = new BytecodeGenerator().generateBytecode(instructionsQueue, className);
         saveBytecodeToClassFile(fileName, byteCode);
+
     }
 
     private ARGUMENT_ERRORS getArgumentValidationErrors(String[] args) {
